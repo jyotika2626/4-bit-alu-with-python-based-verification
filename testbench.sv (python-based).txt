@@ -1,0 +1,41 @@
+// alu_tb.v — Testbench for ALU
+`timescale 1ns/1ps
+
+`timescale 1ns/1ps
+module alu_tb;
+
+    reg [3:0] A, B;
+    reg [2:0] opcode;
+  wire [3:0] Y;
+    integer infile, outfile;
+    integer a, b, op;
+
+  alu uut(.A(A), .B(B), .opcode(opcode), .Y(Y));
+
+    initial begin
+      infile = $fopen("inputpy.txt", "r");
+        outfile = $fopen("output.txt", "w");
+        if (!infile) begin
+          $display("Error opening inputpy.txt");
+          $display("%d\t%d\t%d\t%d", A, B, opcode, Y);
+
+            $finish;
+        end
+        while (!$feof(infile)) begin
+            $fscanf(infile, "%d %d %d\n", a, b, op);
+            A = a; B = b; opcode = op;
+            #10; // Wait for operation
+          $fwrite(outfile, "%d\n", Y);
+          $display("%d\t%d\t%d\t%d", A, B, opcode, Y);
+
+        end
+        $fclose(infile);
+        $fclose(outfile);
+        $display("Simulation complete. Results written to output.txt");
+        $display("%d\t%d\t%d\t%d", A, B, opcode, Y);
+ 
+        $finish;
+    end
+
+endmodule
+
